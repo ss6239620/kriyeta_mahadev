@@ -3,7 +3,6 @@ import { View, Text, StyleSheet, Modal, TouchableOpacity, ScrollView, } from 're
 import { blackText, blueText, colorTheme, grayText } from '../../constant';
 import Header from '../Header';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
-import DoctorProfileCard from '../DoctorProfileCard';
 import { appointmentServices } from '../../services/Appointment';
 import AllDoctorProfileCards from '../AllDoctorProfileCards';
 
@@ -16,7 +15,7 @@ function fetchAllDoc(params) {
 }
 
 useEffect(() => {
- fetchAllDoc()
+ fetchAllDoc();
 }, [])
 
     return (

@@ -7,7 +7,6 @@ import { imagesData } from '../assets/data/imageData'
 import { useNavigation } from '@react-navigation/native'
 
 export default function AllDoctorProfileCards({ isHeartTrue, onUpdate, isHeartRequire, isButtonRequire, data }) {
-    console.log(data);
     const [like, setLike] = useState(isHeartTrue)
     const handleUnlike = () => {
         setLike(false)
@@ -16,7 +15,7 @@ export default function AllDoctorProfileCards({ isHeartTrue, onUpdate, isHeartRe
             : null
     }
     const navigation = useNavigation()
-    var item = imagesData[Math.floor(Math.random()*imagesData.length)];
+    const item = imagesData[Math.floor(Math.random()*imagesData.length)];
     return (
         // <View style={[styles.subContainer, { elevation: 2, borderRadius: 20 }]}>
         <View style={{ padding: 10 }}>

@@ -14,10 +14,14 @@ import AllDoctorProfileCards from '../../components/AllDoctorProfileCards'
 export default function DoctorDetail({ navigation, route }) {
     const Days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
     const { data } = route.params;
-    const [like, setLike] = useState(false)
     const [search, setSearch] = useState('')
     const [textShown, setTextShown] = useState(false)
     const [lengthMore, setLengthMore] = useState(false)
+
+    function formatWorking(text) {
+        const arr= text.split(',')
+        return `${arr[0]} - ${arr[1]}`
+    }
 
     const toggleNumberOfLines = () => {
         setTextShown(!textShown)
@@ -71,7 +75,7 @@ export default function DoctorDetail({ navigation, route }) {
                                 onTextLayout={onTextLayout}
                                 numberOfLines={textShown ? undefined : 2}
                             >
-                                Lorem ipsum dolor sit, amet consectetur adipisicing elit. Praesentium ex blanditiis, repellendus, recusandae repudiandae nihil incidunt quisquam quo aut officia et, nesciunt sed tempore explicabo maxime ipsum ratione optio eius.
+                               {data.about}
                             </Text>
                             {lengthMore ? <Text
                                 onPress={toggleNumberOfLines}
@@ -83,11 +87,11 @@ export default function DoctorDetail({ navigation, route }) {
                     <View style={{ height: "auto", }}>
                         <Text style={styles.bigText}>Working Hour</Text>
                         <UnderLine marginTop={5} />
-                        {Days.map((day, index) => {
+                        {data.days.map((day, index) => {
                             return (
                                 <View style={{ flexDirection: "row", justifyContent: 'space-between', marginTop: 10 }} key={index}>
                                     <Text style={styles.smallText}>{day}</Text>
-                                    <Text style={styles.smallText}>00:00 - 00:00</Text>
+                                    <Text style={styles.smallText}>{formatWorking(data.availibility)}</Text>
                                 </View>
                             )
                         })}
@@ -139,7 +143,7 @@ export default function DoctorDetail({ navigation, route }) {
 
                     </View>
                 </View>
-            </ScrollView >
+            </ScrollView>
             <View style={{
                 width: "100%",
                 height: 60,
@@ -150,7 +154,7 @@ export default function DoctorDetail({ navigation, route }) {
                 justifyContent: "center",
                 alignItems: "center"
             }}>
-                <TouchableOpacity style={{ backgroundColor: blueText.color, width: "90%", height: 40, borderRadius: 50, justifyContent: "center" }} onPress={() => navigation.navigate('BookAppointment')}>
+                <TouchableOpacity style={{ backgroundColor: blueText.color, width: "90%", height: 40, borderRadius: 50, justifyContent: "center" }} onPress={() => navigation.navigate('BookAppointment',{data:data})}>
                     <Text style={[styles.smallText, { color: "white", alignSelf: 'center' }]}>Book Appointment</Text>
                 </TouchableOpacity>
             </View>

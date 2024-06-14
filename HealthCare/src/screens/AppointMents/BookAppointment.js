@@ -2,39 +2,40 @@ import { Pressable, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, V
 import React, { useState } from 'react'
 import { blackText, blueText,  colorTheme, grayText } from '../../constant'
 import Header from '../../components/Header'
-import DoctorProfileCard from '../../components/DoctorProfileCard'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import AllDoctorProfileCards from '../../components/AllDoctorProfileCards'
 
 const days = ["Mon", "Tue", "Wed", "Th", "Fr", "Sat", "Sun"]
 
-export default function BookAppointment({navigation}) {
+export default function BookAppointment({navigation,route}) {
     const [customSchedule, setCustomSchedule] = useState('')
     const [selectDay, setSelectDay] = useState(0)
     const [selectTime, setSelectTime] = useState(0)
-    const data = [
-        {
-          name: 'Dr.Narayanankutty',
-          job: "Heart Surgeon",
-          image: require('../../assets/img/DocData/d3.jpeg')
-        },
-        {
-          name: 'Dr Dileep Damodaran',
-          job: "Neaurologist",
-          image: require('../../assets/img/DocData/d4.jpeg')
-        },
-        {
-          name: 'Dr. Gautam Verma',
-          job: "Cardiologist",
-          image: require('../../assets/img/DocData/d2.jpeg')
-        },
-      ];
+    // const data = [
+    //     {
+    //       name: 'Dr.Narayanankutty',
+    //       job: "Heart Surgeon",
+    //       image: require('../../assets/img/DocData/d3.jpeg')
+    //     },
+    //     {
+    //       name: 'Dr Dileep Damodaran',
+    //       job: "Neaurologist",
+    //       image: require('../../assets/img/DocData/d4.jpeg')
+    //     },
+    //     {
+    //       name: 'Dr. Gautam Verma',
+    //       job: "Cardiologist",
+    //       image: require('../../assets/img/DocData/d2.jpeg')
+    //     },
+    //   ];
+      const {data}= route.params
     return (
         <View style={styles.container}>
             <ScrollView>
                 <View style={[styles.subContainer,]}>
                     <Header header={"Book Appointment"} leftIconName={"chevron-back"} titleMargin={30} />
                 </View>
-                <DoctorProfileCard  data={data}/>
+                <AllDoctorProfileCards data={data} />
                 <View style={[styles.subContainer, { marginTop: 30 }]}>
                     <View style={{ height: 'auto', }}>
                         <View style={{ flexDirection: "row", justifyContent: "space-evenly", alignItems: "center" }}>
@@ -71,7 +72,7 @@ export default function BookAppointment({navigation}) {
                     <Text style={[styles.smallText, { lineHeight: 40,marginTop:30 }]}>Book Appointment</Text>
                     <Text style={[styles.bigText, { fontWeight: "700", fontSize: 18 }]}>Day</Text>
                     <ScrollView showsHorizontalScrollIndicator={false} horizontal={true} style={{ flexDirection: "row", marginTop: 10 }}>
-                        {days.map((day, index) => {
+                        {data.days.map((day, index) => {
                             return (
                                 <Pressable 
                                 key={index} 
@@ -79,26 +80,16 @@ export default function BookAppointment({navigation}) {
                                 onPress={() => setSelectDay(index)}
                                 >
                                     <Text style={[styles.smallText, { fontWeight: '300', color: index === selectDay ? "white" : "black" }]}>{day}</Text>
-                                    <Text style={[styles.smallText, { fontWeight: '300', color: index === selectDay ? "white" : "black" }]}>{4 + index} Oct</Text>
+                           
                                 </Pressable>
                             )
                         })}
                     </ScrollView>
-                    <Text style={[styles.bigText, { fontWeight: "700", fontSize: 18, lineHeight: 30, marginTop: 10 }]}>Time</Text>
-                    <ScrollView showsHorizontalScrollIndicator={false} horizontal={true} style={{ flexDirection: "row", marginTop: 10 }}>
-                        {[1, 2, 3, 4].map((_, index) => {
-                            return (
-                                <Pressable
-                                    key={index}
-                                    style={{ width: 100, height: 40, borderWidth: 1, borderColor: colorTheme.borderColor, borderRadius: 15, justifyContent: "center", alignItems: "center", marginRight: 5, backgroundColor: index === selectTime ? colorTheme.primaryColor : "white", flexDirection: "row" }}
-                                    onPress={() => setSelectTime(index)}
-                                >
-                                    <Text style={[styles.smallText, { fontWeight: '300', color: index === selectTime ? "white" : "black", marginRight: 5 }]}>{index}:00</Text>
-                                    <Text style={[styles.smallText, { fontWeight: '300', color: index === selectTime ? "white" : "black" }]}>PM</Text>
-                                </Pressable>
-                            )
-                        })}
-                    </ScrollView>
+                    <Text style={[styles.bigText, { fontWeight: "700", fontSize: 18, lineHeight: 30, marginTop: 10, }]}>Time Slots</Text>
+                    <View style={{flexDirection:'row',justifyContent:'space-between',alignItems:'center',borderWidth:1,padding:10,borderColor:colorTheme.borderColor,borderRadius:10,backgroundColor:colorTheme.borderColor}}>
+                        <Text style={[styles.smallText,{fontSize:15,}]}>5:00PM - 6:00 PM</Text>
+                        <Text>N.A</Text>
+                    </View>
                     <View style={styles.textInput}>
                         <View>
                             <TextInput
