@@ -4,7 +4,6 @@ import { colorTheme, blackText, blueText, grayText } from '../../constant'
 import LottieView from 'lottie-react-native'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useDispatch, useSelector } from 'react-redux'
-import { userServices } from '../../services/userAuth'
 import { Signup } from '../../store/actions/auth'
 
 export default function Template({ navigation }) {

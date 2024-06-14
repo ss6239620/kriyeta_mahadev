@@ -39,6 +39,30 @@ async function BookAppointment() {
     })
 }
 
+async function fetchAllDoc() {
+    console.log('in fetchalldoc');
+    const token = await AsyncStorage.getItem("userToken");
+    const config = {
+        headers: {
+            'auth-token': token,
+        }
+    }
+    return new Promise((resolve, reject) => {
+        axios.get(`${API_URL}/user/fetchalldoctors`, config
+        ).then(async (response) => {
+            try {
+                resolve(response)
+            } catch (err) {
+                console.log(err);
+                reject(e)
+            }
+        }).catch((err) => {
+            console.log(err.response.data);
+            reject(err)
+        })
+    })
+}
+
 export const appointmentServices = {
-    BookAppointment
+    BookAppointment,fetchAllDoc
 }

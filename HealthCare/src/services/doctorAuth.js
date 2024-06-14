@@ -45,7 +45,7 @@ async function Login(email, password) {
     })
 }
 
-async function ProfileComplete(uniqueid, specialization, experience, yrofgraduatio, type, loaction, about, fees, govno, phone) {
+async function ProfileComplete(uniqueid, specialization, experience, yrofgraduatio, type, loaction, about, fees, govno, phone,availibility,slot,days) {
     const token = await AsyncStorage.getItem("userToken");
     const body = {
         uniqueid: uniqueid,
@@ -57,7 +57,10 @@ async function ProfileComplete(uniqueid, specialization, experience, yrofgraduat
         about: about,
         fees: fees,
         govno: govno,
-        number: phone
+        number: phone,
+        availibility:availibility,
+        slot:slot,
+        days:days
     }
     const config = {
         headers: {

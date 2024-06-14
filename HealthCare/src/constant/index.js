@@ -35,7 +35,7 @@ const blueText = {
     fontWeight: "600",
 }
 
-const API_URL = 'https://backend-telehealth.onrender.com/api'
+const API_URL = 'http://localhost:5000/api'  //main api url
 
 const FILE_API_URL='https://backend-telehealth.onrender.com/api'
 

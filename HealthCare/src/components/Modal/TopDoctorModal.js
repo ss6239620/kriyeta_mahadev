@@ -1,29 +1,24 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Modal, TouchableOpacity, ScrollView, } from 'react-native';
 import { blackText, blueText, colorTheme, grayText } from '../../constant';
 import Header from '../Header';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import DoctorProfileCard from '../DoctorProfileCard';
+import { appointmentServices } from '../../services/Appointment';
+import AllDoctorProfileCards from '../AllDoctorProfileCards';
 
 
 const TopDoctorModal = ({ modalVisible, setModalVisible }) => {
-const data = [
-  {
-    name: 'Dr.Narayanankutty',
-    job: "Heart Surgeon",
-    image: require('../../assets/img/DocData/d3.jpeg')
-  },
-  {
-    name: 'Dr Dileep Damodaran',
-    job: "Neaurologist",
-    image: require('../../assets/img/DocData/d4.jpeg')
-  },
-  {
-    name: 'Dr. Gautam Verma',
-    job: "Cardiologist",
-    image: require('../../assets/img/DocData/d2.jpeg')
-  },
-];
+const [data, setdata] = useState([])
+
+function fetchAllDoc(params) {
+    appointmentServices.fetchAllDoc().then(res=>setdata(res.data))
+}
+
+useEffect(() => {
+ fetchAllDoc()
+}, [])
+
     return (
         <Modal
             animationType="slide"
@@ -51,9 +46,9 @@ const data = [
                 </View>
                 {/* Main Content */}
                 <ScrollView showsVerticalScrollIndicator={false} style={styles.content}>
-                    {[1, 2, 3, 4].map((_, index) => (
+                    {data.map((_, index) => (
                         <View key={index}style={{ backgroundColor: 'white', elevation: 2, borderRadius: 10,marginTop:10 }}>
-                            <DoctorProfileCard isButtonRequire isHeartRequire data={data} />
+                            <AllDoctorProfileCards isButtonRequire isHeartRequire data={_} />
                         </View>
                     ))}
                 </ScrollView>
@@ -61,7 +56,7 @@ const data = [
                 <View style={styles.footer}>
                 </View>
             </View>
-        </Modal >
+        </Modal>
     );
 };
 

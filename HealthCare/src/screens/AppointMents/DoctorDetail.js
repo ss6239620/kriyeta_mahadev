@@ -9,6 +9,7 @@ import UnderLine from '../../components/UnderLine'
 import WebView from 'react-native-webview'
 import DoctorRenameCard from '../../components/DoctorRenameCard'
 import DoctorProfileCard from '../../components/DoctorProfileCard'
+import AllDoctorProfileCards from '../../components/AllDoctorProfileCards'
 
 export default function DoctorDetail({ navigation, route }) {
     const Days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
@@ -30,7 +31,7 @@ export default function DoctorDetail({ navigation, route }) {
                 <View style={[styles.subContainer, { marginTop: 2 }]}>
                     <Header header={"Doctor Details"} leftIconName={"chevron-back"} rightIconName={"share-social-outline"} />
                 </View>
-                <DoctorProfileCard data={data} />
+                <AllDoctorProfileCards data={data} />
                 <View style={styles.subContainer}>
                     <View style={{ height: 'auto', }}>
                         <View style={{ flexDirection: "row", justifyContent: "space-evenly", alignItems: "center" }}>
