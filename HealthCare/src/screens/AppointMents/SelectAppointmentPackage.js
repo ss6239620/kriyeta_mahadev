@@ -37,9 +37,21 @@ function SelectPackage({packageTitle,icon,packagedesc,price}) {
     )
 }
 
-export default function SelectAppointmentPackage({navigation}) {
-    function handleNext(params) {
-        appointmentServices.BookAppointment()
+export default function SelectAppointmentPackage({navigation,route}) {
+    const {data,day,slot}= route.params.data;
+    console.log(slot);
+
+    function getTime() {
+        let tempDate = new Date();
+        const fDate =  tempDate.toLocaleString('en-US', { hour: 'numeric', minute: 'numeric', hour12: true })
+        return fDate
+    }
+
+    function handleNext() {
+        console.log(slot);
+        appointmentServices.BookAppointment(data.doctor._id,getTime(),'video call',data.slot,'i am haveing headache',slot,day).then(
+            res=>{console.log(res.data);}
+        )
     }
     return (
         <View style={styles.container}>

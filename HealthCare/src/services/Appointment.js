@@ -3,18 +3,22 @@ import axios from "axios";
 import { API_URL } from "../constant";
 import { navigate } from "./navRef";
 
-async function BookAppointment() {
+async function BookAppointment(id, time, packages, duration, problem, slot, days) {
     console.log('in BookAppointment');
+    console.log('yyyy', days);
     const token = await AsyncStorage.getItem("userToken");
     const body = {
-        doctor: "6630f4d40688518c76cf8e1d",
-        date: "10",
-        time: "male",
-        customschedule: "male",
-        package: "male",
-        duration: "male",
-        problem: "male"
+        doctor: id,
+        date: "10", //null
+        time: time,
+        customschedule: "No", //null
+        package: packages, //fix
+        duration: duration,
+        problem: problem, //fixed
+        days: days,
+        slot: slot,
     }
+    // console.log('gddg',typeof days);
     const config = {
         headers: {
             'auth-token': token,
@@ -25,7 +29,7 @@ async function BookAppointment() {
         ).then(async (response) => {
             try {
                 // await setAuthAsyncStorage(response)
-                console.log(response.data);
+                // console.log(response.data);
                 resolve(response)
                 navigate('PaymentMethod')
             } catch (err) {
@@ -63,6 +67,35 @@ async function fetchAllDoc() {
     })
 }
 
+async function getSlotDetail(id,days) {
+    console.log('in fetchalldoc');
+    const token = await AsyncStorage.getItem("userToken");
+    const body={
+        doctor:id,
+        days:days
+    }
+    const config = {
+        headers: {
+            'auth-token': token,
+        }
+    }
+    return new Promise((resolve, reject) => {
+        axios.post(`${API_URL}/user/getslotdetail`, body,config
+        ).then(async (response) => {
+            try {
+                resolve(response)
+            } catch (err) {
+                console.log(err);
+                reject(e)
+            }
+        }).catch((err) => {
+            console.log(err.response.data);
+            reject(err)
+        })
+    })
+}
+
+
 export const appointmentServices = {
-    BookAppointment,fetchAllDoc
+    BookAppointment, fetchAllDoc, getSlotDetail
 }
