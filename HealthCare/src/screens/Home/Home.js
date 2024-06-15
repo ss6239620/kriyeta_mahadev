@@ -19,6 +19,7 @@ import { articlesServices } from '../../services/Article'
 import Contacts from 'react-native-contacts'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import LottieView from 'lottie-react-native'
+import { appointmentServices } from '../../services/Appointment'
 
 const data = [
   {
@@ -60,6 +61,7 @@ async function SendSOS(params) {
 export default function Home({ navigation }) {
 
   const [article, setarticle] = useState({})
+  const [docData, setdocData] = useState([])
   const [articleLoading, setarticleLoading] = useState(false)
   const [search, setSearch] = useState('')
   const [isPost, setIsPost] = useState(false)
@@ -77,7 +79,21 @@ export default function Home({ navigation }) {
         setarticleLoading(true)
       }
     )).catch(err => { console.log('error fetching data'); })
+    fetchAllDoc()
   }, [])
+
+  function fetchAllDoc(params) {
+    appointmentServices.fetchAllDoc().then(res=>{
+      setdocData(res.data)
+    })
+  }
+
+  function createArr(params) {
+   const data= docData.slice(0,2)
+   return data
+  }
+
+
 
 
   // articlesServices.FetchArticles()
@@ -187,15 +203,9 @@ export default function Home({ navigation }) {
             onPress={() => { setTopDoctorModal(true) }}
             style={[{ color: colorTheme.primaryColor, fontSize: 15 }]}>See All</Text>
         </View>
-        <Carousel data={data}>
+        <Carousel data={docData.slice(0,2)}>
           <DoctorCard />
         </Carousel>
-        {/* {data.map((item) => (
-          <View key={item.name}>
-            <DoctorCard isNavigate item={item} />
-          </View>
-        ))} */}
-
         <View style={{}}>
           <View style={{ width: '90%', flexDirection: "row", justifyContent: 'space-between', padding: 10 }}>
             <Text style={[styles.grayText, { marginBottom: 8, }]}>Doctor Speciality</Text>
@@ -248,7 +258,7 @@ export default function Home({ navigation }) {
           )) :
             <Text>Loading...</Text>}
         </View>
-      </ScrollView >
+      </ScrollView>
     </View>
   )
 }

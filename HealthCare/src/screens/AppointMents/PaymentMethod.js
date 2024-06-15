@@ -7,18 +7,20 @@ import FontAwesome6 from 'react-native-vector-icons/FontAwesome6'
 import RadioButton from '../../components/RadioButton'
 import { PayNow } from '../../components/PayWithUpi'
 
-function Payment({ icon, method,colors }) {
+function Payment({ icon, method,colors,phone }) {
   return (
     <Pressable 
-    onPress={()=>{PayNow()}}
+    onPress={()=>{PayNow(phone)}}
     style={{ flexDirection: "row", borderWidth: 1, borderColor: colorTheme.borderColor, borderRadius: 10, height: 45, alignItems: 'center',marginTop:5 }}>
       <FontAwesome6 name={icon} size={35} color={colors} style={{ marginLeft: 10, marginRight: 10 }} />
       <Text>{method}</Text>
     </Pressable>
   )
 }
-export default function PaymentMethod() {
+export default function PaymentMethod({navigation,route}) {
   const [selected, setselected] = useState(true)
+  const phone=route.params.phone
+
   return (
     <View style={styles.container}>
       <View style={styles.subContainer}>
@@ -34,7 +36,7 @@ export default function PaymentMethod() {
           </TouchableOpacity>
         </View>
         <Text style={[styles.bigText, { marginTop: 25 }]}>Pay with UPI</Text>
-        <Payment icon={"google-pay"} method={"Click here to pay with upi"} colors={"black"}/>
+        <Payment icon={"google-pay"} method={"Click here to pay with upi"} colors={"black"} phone={phone}/>
       </View>
     </View>
   )

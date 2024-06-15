@@ -47,7 +47,7 @@ useEffect(() => {
                 <ScrollView showsVerticalScrollIndicator={false} style={styles.content}>
                     {data.map((_, index) => (
                         <View key={index}style={{ backgroundColor: 'white', elevation: 2, borderRadius: 10,marginTop:10 }}>
-                            <AllDoctorProfileCards isButtonRequire isHeartRequire data={_} />
+                            <AllDoctorProfileCards isButtonRequire isHeartRequire data={_} isModal={true} setModal={setModalVisible} />
                         </View>
                     ))}
                 </ScrollView>

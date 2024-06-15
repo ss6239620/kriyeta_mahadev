@@ -17,6 +17,7 @@ export default function Carousel({ data, children: Children, childrenStyle }) {
   useEffect(() => {
     const interval = setInterval(() => {
       // Increment indexDot to move to the next item
+      // console.log('data-->',data.length);
       setIndexDot((prevIndex) => (prevIndex + 1) % data.length);
       // Scroll to the next item
       flatListRef.current?.scrollToIndex({

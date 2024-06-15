@@ -31,7 +31,6 @@ async function BookAppointment(id, time, packages, duration, problem, slot, days
                 // await setAuthAsyncStorage(response)
                 // console.log(response.data);
                 resolve(response)
-                navigate('PaymentMethod')
             } catch (err) {
                 console.log(err);
                 reject(e)
@@ -53,6 +52,34 @@ async function fetchAllDoc() {
     }
     return new Promise((resolve, reject) => {
         axios.get(`${API_URL}/user/fetchalldoctors`, config
+        ).then(async (response) => {
+            try {
+                resolve(response)
+            } catch (err) {
+                console.log(err);
+                reject(e)
+            }
+        }).catch((err) => {
+            console.log(err.response.data);
+            reject(err)
+        })
+    })
+}
+
+async function acceptReject(id,message) {
+    console.log('in acceptReject');
+    const token = await AsyncStorage.getItem("doctorToken");
+    const body={
+        id:id,
+        mssg:message
+    }
+    const config = {
+        headers: {
+            'auth-token': token,
+        }
+    }
+    return new Promise((resolve, reject) => {
+        axios.post(`${API_URL}/doctor/acceptreject`, body,config
         ).then(async (response) => {
             try {
                 resolve(response)
@@ -97,5 +124,5 @@ async function getSlotDetail(id,days) {
 
 
 export const appointmentServices = {
-    BookAppointment, fetchAllDoc, getSlotDetail
+    BookAppointment, fetchAllDoc, getSlotDetail,acceptReject
 }

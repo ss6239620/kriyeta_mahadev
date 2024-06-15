@@ -11,7 +11,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import LottieView from 'lottie-react-native';
 
 const DoctorAppointmentDetailScreen = ({ navigation, route }) => {
-    const user_id = route.params.data.user
+    const user_id = route.params.id
     const [userInfoData, setuserInfoData] = useState({})
     const [isLoading, setisLoading] = useState(true)
 
@@ -45,7 +45,6 @@ const DoctorAppointmentDetailScreen = ({ navigation, route }) => {
     return (
         <>
             {isLoading ? <ActivityIndicator size={'large'} style={{ justifyContent: 'center', alignItems: 'center' }} /> :
-
                 <View style={styles.container}>
                     <ScrollView>
                         {/* Header */}

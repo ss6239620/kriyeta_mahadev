@@ -7,16 +7,17 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export default function App({ navigation }) {
   useEffect(() => {
     setTimeout(async () => {
-      const token = await AsyncStorage.getItem("userToken");
+      const usertoken = await AsyncStorage.getItem("userToken");
+      const docToken = await AsyncStorage.getItem("doctorToken");
       const doctor = await AsyncStorage.getItem("isDoctor");
-      const isDoctor = JSON.parse(doctor)
-      token ?
-        isDoctor.isdoctor ?
-          navigation.navigate('DoctorHome')
-          :
-          navigation.navigate('BottomTab')
+
+      // const isDoctor = JSON.parse(doctor)
+      usertoken ?
+        navigation.navigate('BottomTab')
         :
-        navigation.navigate("GetStarted")
+        docToken ?
+          navigation.navigate('DoctorHome')
+          :navigation.navigate('GetStarted')
     }, 4000);
   }, [])
 

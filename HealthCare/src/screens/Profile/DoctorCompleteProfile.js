@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -9,26 +9,28 @@ import {
   TextInput,
   TouchableOpacity,
 } from 'react-native';
-import {blackText, blueText, colorTheme, grayText} from '../../constant';
+import { blackText, blueText, colorTheme, grayText } from '../../constant';
 import Header from '../../components/Header';
-import {doctorServices} from '../../services/doctorAuth';
-import {sendSmsData} from '../../components/SendSMS';
+import { doctorServices } from '../../services/doctorAuth';
+import { sendSmsData } from '../../components/SendSMS';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import TimeTextInput from '../../components/TextInputs/TimeInput';
 import DropDownInput from '../../components/TextInputs/DropDownInput';
-import {SlotData} from '../../assets/data/DropDown';
-import {days} from '../../assets/data/impData';
+import { DoctorType, GovernmentOfficer, SlotData, Specialization } from '../../assets/data/DropDown';
+import { days } from '../../assets/data/impData';
 
-const CompleteProfile = ({navigation}) => {
+const CompleteProfile = ({ navigation }) => {
   const [uniqueid, setuniqueid] = useState('');
-  const [specialization, setspecialization] = useState('');
+  const [dropDownData, setdropDownData] = useState({
+    specialization: '',
+    type:'',
+    govno:''
+  })
   const [experience, setexperience] = useState('');
   const [yrofgraduatio, setyrofgraduatio] = useState('');
-  const [type, settype] = useState('');
   const [loaction, setloaction] = useState('');
   const [about, setabout] = useState('');
   const [fees, setfees] = useState('');
-  const [govno, setgovno] = useState('');
   const [phone, setPhone] = useState('');
   const [selected, setselected] = useState([]);
   const [availibility, setAvailibility] = useState({
@@ -56,14 +58,14 @@ const CompleteProfile = ({navigation}) => {
     doctorServices
       .ProfileComplete(
         uniqueid,
-        specialization,
+        dropDownData.specialization,
         experience,
         yrofgraduatio,
-        type,
+        dropDownData.type,
         loaction,
         about,
         fees,
-        govno,
+        dropDownData.govno,
         phone,
         `${availibility.from},${availibility.to}`,
         availibility.slot,
@@ -79,12 +81,19 @@ const CompleteProfile = ({navigation}) => {
           },
         ];
         sendSmsData(SMSDATA);
-        navigation.navigate('VerifyAccount', {verify: random4DigitNumber});
+        navigation.navigate('VerifyAccount', { verify: random4DigitNumber });
       });
   }
 
   const handleDateChange = (name, value) => {
     setAvailibility(prevState => ({
+      ...prevState,
+      [name]: value,
+    }));
+  };
+
+  const handleDropDownChange = (name, value) => {
+    setdropDownData(prevState => ({
       ...prevState,
       [name]: value,
     }));
@@ -102,32 +111,32 @@ const CompleteProfile = ({navigation}) => {
       </View>
       {/* Main Content */}
       <ScrollView showsVerticalScrollIndicator={false} style={styles.content}>
-        <View style={{marginBottom: 20}}>
-          <Text style={[styles.smallText, {color: 'black', marginBottom: 5}]}>
-            Registration No.
+        <View style={{ marginBottom: 20 }}>
+          <Text style={[styles.smallText, { color: 'black', marginBottom: 5 }]}>
+            Registration No
           </Text>
           <View style={styles.textInput}>
             <TextInput
-              placeholder="A36hh"
+              placeholder="200023"
               onChangeText={text => setuniqueid(text)}
               value={uniqueid}
+              keyboardType='number-pad'
             />
           </View>
         </View>
-        <View style={{marginBottom: 20}}>
-          <Text style={[styles.smallText, {color: 'black', marginBottom: 5}]}>
-            specialization
-          </Text>
-          <View style={[styles.textInput]}>
-            <TextInput
-              placeholder="Heart surgeon"
-              onChangeText={text => setspecialization(text)}
-              value={specialization}
+        <View style={{ marginBottom: 20 }}>
+            <DropDownInput
+              data={Specialization}
+              inputTitle={'Specialization'}
+              dropDownTitle={'Specialization'}
+              isUnderLineRequire={false}
+              style={{ marginTop: 0}}
+              handleChange={handleDropDownChange}
+              textInputParams={'specialization'}
             />
-          </View>
         </View>
-        <View style={{marginBottom: 20}}>
-          <Text style={[styles.smallText, {color: 'black', marginBottom: 5}]}>
+        <View style={{ marginBottom: 20 }}>
+          <Text style={[styles.smallText, { color: 'black', marginBottom: 5 }]}>
             experience
           </Text>
           <View style={styles.textInput}>
@@ -135,11 +144,12 @@ const CompleteProfile = ({navigation}) => {
               placeholder="2 years"
               onChangeText={text => setexperience(text)}
               value={experience}
+              keyboardType='number-pad'
             />
           </View>
         </View>
-        <View style={{marginBottom: 20}}>
-          <Text style={[styles.smallText, {color: 'black', marginBottom: 5}]}>
+        <View style={{ marginBottom: 20 }}>
+          <Text style={[styles.smallText, { color: 'black', marginBottom: 5 }]}>
             year of graduation
           </Text>
           <View style={styles.textInput}>
@@ -147,23 +157,23 @@ const CompleteProfile = ({navigation}) => {
               placeholder="2 years"
               onChangeText={text => setyrofgraduatio(text)}
               value={yrofgraduatio}
+              keyboardType='number-pad'
             />
           </View>
         </View>
-        <View style={{marginBottom: 20}}>
-          <Text style={[styles.smallText, {color: 'black', marginBottom: 5}]}>
-            Government or private
-          </Text>
-          <View style={styles.textInput}>
-            <TextInput
-              placeholder="Government/private"
-              onChangeText={text => settype(text)}
-              value={type}
+        <View style={{ marginBottom: 20 }}>
+        <DropDownInput
+              data={DoctorType}
+              inputTitle={'Job Type'}
+              dropDownTitle={'Job Type'}
+              isUnderLineRequire={false}
+              style={{ marginTop: 0}}
+              handleChange={handleDropDownChange}
+              textInputParams={'type'}
             />
-          </View>
         </View>
-        <View style={{marginBottom: 20}}>
-          <Text style={[styles.smallText, {color: 'black', marginBottom: 5}]}>
+        <View style={{ marginBottom: 20 }}>
+          <Text style={[styles.smallText, { color: 'black', marginBottom: 5 }]}>
             loaction
           </Text>
           <View style={styles.textInput}>
@@ -174,11 +184,11 @@ const CompleteProfile = ({navigation}) => {
             />
           </View>
         </View>
-        <View style={{marginBottom: 0}}>
-          <Text style={[styles.smallText, {color: 'black', marginBottom: 5}]}>
+        <View style={{ marginBottom: 0 }}>
+          <Text style={[styles.smallText, { color: 'black', marginBottom: 5 }]}>
             Availibility
           </Text>
-          <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
             <TimeTextInput
               inputTitle={'From'}
               isRequire={false}
@@ -198,13 +208,13 @@ const CompleteProfile = ({navigation}) => {
           inputTitle={'Slots'}
           dropDownTitle={'Slots'}
           isUnderLineRequire={false}
-          style={{marginTop: 25}}
+          style={{ marginTop: 25 }}
           handleChange={handleDateChange}
           textInputParams={'slot'}
         />
-        <View style={{marginVertical: 20}}>
+        <View style={{ marginVertical: 20 }}>
           <Text>Days</Text>
-          <ScrollView horizontal={true} style={{flexDirection: 'row'}}>
+          <ScrollView horizontal={true} style={{ flexDirection: 'row' }}>
             {days.map((num, index) => {
               return (
                 <TouchableOpacity
@@ -217,13 +227,13 @@ const CompleteProfile = ({navigation}) => {
                     justifyContent: 'center',
                     alignItems: 'center',
                     marginRight: 5,
-                    backgroundColor:selected.includes(num)?colorTheme.primaryColor:'white'
+                    backgroundColor: selected.includes(num) ? colorTheme.primaryColor : 'white'
                   }}
                   onPress={() => {
                     handleChooseDays(num);
                   }}
                   key={index}>
-                  <Text style={[styles.smallText, {fontWeight: '500',color:selected.includes(num)?'white':'black'}]}>
+                  <Text style={[styles.smallText, { fontWeight: '500', color: selected.includes(num) ? 'white' : 'black' }]}>
                     {num}
                   </Text>
                 </TouchableOpacity>
@@ -231,8 +241,8 @@ const CompleteProfile = ({navigation}) => {
             })}
           </ScrollView>
         </View>
-        <View style={{marginBottom: 20}}>
-          <Text style={[styles.smallText, {color: 'black', marginBottom: 5}]}>
+        <View style={{ marginBottom: 20 }}>
+          <Text style={[styles.smallText, { color: 'black', marginBottom: 5 }]}>
             fees
           </Text>
           <View style={styles.textInput}>
@@ -240,23 +250,23 @@ const CompleteProfile = ({navigation}) => {
               placeholder="$70"
               onChangeText={text => setfees(text)}
               value={fees}
+              keyboardType='number-pad'
             />
           </View>
         </View>
-        <View style={{marginBottom: 20}}>
-          <Text style={[styles.smallText, {color: 'black', marginBottom: 5}]}>
-            Is government officer?
-          </Text>
-          <View style={styles.textInput}>
-            <TextInput
-              placeholder="yes/no"
-              onChangeText={text => setgovno(text)}
-              value={govno}
-            />
-          </View>
+        <View style={{ marginBottom: 20 }}>
+        <DropDownInput
+          data={GovernmentOfficer}
+          inputTitle={'Is Officer'}
+          dropDownTitle={'Is Officer'}
+          isUnderLineRequire={false}
+          style={{ marginTop: 25 }}
+          handleChange={handleDateChange}
+          textInputParams={'govno'}
+        />
         </View>
-        <View style={{marginBottom: 20}}>
-          <Text style={[styles.smallText, {color: 'black', marginBottom: 5}]}>
+        <View style={{ marginBottom: 20 }}>
+          <Text style={[styles.smallText, { color: 'black', marginBottom: 5 }]}>
             Phone No
           </Text>
           <View style={styles.textInput}>
@@ -264,14 +274,15 @@ const CompleteProfile = ({navigation}) => {
               placeholder="+91 771********"
               onChangeText={text => setPhone(text)}
               value={phone}
+              keyboardType='phone-pad'
             />
           </View>
         </View>
-        <View style={{marginBottom: 20}}>
-          <Text style={[styles.smallText, {color: 'black', marginBottom: 5}]}>
+        <View style={{ marginBottom: 20 }}>
+          <Text style={[styles.smallText, { color: 'black', marginBottom: 5 }]}>
             about
           </Text>
-          <View style={[styles.textInput, {height: 90}]}>
+          <View style={[styles.textInput, { height: 90 }]}>
             <TextInput
               placeholder="I am ...."
               onChangeText={text => setabout(text)}
@@ -293,7 +304,7 @@ const CompleteProfile = ({navigation}) => {
           }}
           onPress={() => handleUpdate()}>
           <Text
-            style={[styles.smallText, {color: 'white', alignSelf: 'center'}]}>
+            style={[styles.smallText, { color: 'white', alignSelf: 'center' }]}>
             Update Profile
           </Text>
         </TouchableOpacity>

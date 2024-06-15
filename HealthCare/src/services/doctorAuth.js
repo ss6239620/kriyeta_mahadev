@@ -14,7 +14,7 @@ async function Signup(username, email, password) {
             password: password,
         }).then(async (res) => {
             try {
-                await setAuthAsyncStorage(res)
+                await setDocAsyncStorage(res)
                 resolve(res)
             } catch (error) {
                 reject(error)
@@ -34,7 +34,7 @@ async function Login(email, password) {
             password: password,
         }).then(async (response) => {
             try {
-                await setAuthAsyncStorage(response)
+                await setDocAsyncStorage(response)
                 // console.log(response);
                 resolve(response)
             } catch (e) { reject(e) }

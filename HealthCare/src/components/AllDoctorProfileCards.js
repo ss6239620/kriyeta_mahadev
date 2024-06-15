@@ -6,7 +6,7 @@ import { blackText, blueText, color, colorTheme, grayText } from '../constant'
 import { imagesData } from '../assets/data/imageData'
 import { useNavigation } from '@react-navigation/native'
 
-export default function AllDoctorProfileCards({ isHeartTrue, onUpdate, isHeartRequire, isButtonRequire, data }) {
+export default function AllDoctorProfileCards({ isHeartTrue, onUpdate, isHeartRequire, isButtonRequire, data, isModal, setModal }) {
     const [like, setLike] = useState(isHeartTrue)
     const handleUnlike = () => {
         setLike(false)
@@ -15,7 +15,13 @@ export default function AllDoctorProfileCards({ isHeartTrue, onUpdate, isHeartRe
             : null
     }
     const navigation = useNavigation()
-    const item = imagesData[Math.floor(Math.random()*imagesData.length)];
+    const item = imagesData[Math.floor(Math.random() * imagesData.length)];
+
+    function handlePress(params) {
+        isModal?setModal(false):null
+        navigation.navigate('DoctorDetail', { data: data })
+    }
+
     return (
         // <View style={[styles.subContainer, { elevation: 2, borderRadius: 20 }]}>
         <View style={{ padding: 10 }}>
@@ -23,14 +29,14 @@ export default function AllDoctorProfileCards({ isHeartTrue, onUpdate, isHeartRe
                 {!data.image === null ?
                     <Image source={data.image} resizeMode='contain' style={styles.image} />
                     :
-                    <Image source={{uri:item}} resizeMode='contain' style={styles.image} />
+                    <Image source={{ uri: item }} resizeMode='contain' style={styles.image} />
                 }
                 <View style={{ width: "60%", marginLeft: 16, height: 100 }}>
                     <Text style={styles.bigText}>{data.doctor.name}</Text>
                     <Text style={[styles.smallText, { marginTop: 1 }]}>{data.specialization}</Text>
-                    <View style={{ flexDirection: "row", alignItems: 'center', marginTop: 5 ,justifyContent:'space-between'}}>
-                        <Text style={[styles.bigText,{fontSize:15}]}>{data.type}</Text>
-                        <Text style={[styles.bigText,{fontSize:15}]}> ₹{data.fees}</Text>
+                    <View style={{ flexDirection: "row", alignItems: 'center', marginTop: 5, justifyContent: 'space-between' }}>
+                        <Text style={[styles.bigText, { fontSize: 15 }]}>{data.type}</Text>
+                        <Text style={[styles.bigText, { fontSize: 15 }]}> ₹{data.fees}</Text>
                     </View>
                     <Pressable style={{ marginTop: 5, justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center' }} onPress={() => { like ? handleUnlike() : setLike(true) }}>
                         <View style={{ flexDirection: 'row' }}>
@@ -48,7 +54,7 @@ export default function AllDoctorProfileCards({ isHeartTrue, onUpdate, isHeartRe
                 </View>
             </View>
             {isButtonRequire ?
-                <TouchableOpacity onPress={()=>navigation.navigate('DoctorDetail',{data:data})} style={{ backgroundColor: colorTheme.iconWithBlueBackGround, borderRadius: 10, marginTop: 10 }}>
+                <TouchableOpacity onPress={handlePress} style={{ backgroundColor: colorTheme.iconWithBlueBackGround, borderRadius: 10, marginTop: 10 }}>
                     <Text style={[, { textAlign: 'center', padding: 12 }]}>Make Appointment</Text>
                 </TouchableOpacity>
                 : null}

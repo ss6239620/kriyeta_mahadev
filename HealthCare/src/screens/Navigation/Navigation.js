@@ -88,7 +88,7 @@ export default function App() {
         <Stack.Screen name='SuccesfullRegistration' component={SuccesfullRegistration} options={{ headerShown: false }} />
         <Stack.Screen name='LoginChoice' component={LoginChoice} options={{ headerShown: false }} />
         <Stack.Screen name='Olddisease' component={Olddisease} options={{ headerShown: false }} />
-        <Stack.Screen name='DoctorLogin' component={DoctorCompleteProfile} options={{ headerShown: false }} />
+        <Stack.Screen name='DoctorLogin' component={DoctorLogin} options={{ headerShown: false }} />
         <Stack.Screen name='DoctorCompleteProfile' component={DoctorCompleteProfile} options={{ headerShown: false }} />
         <Stack.Screen name='DoctorChatRoom' component={DoctorChatRoom} options={{ headerShown: false }} />
         <Stack.Screen name='DoctorPrescription' component={DoctorPrescription} options={{ headerShown: false }} />

@@ -50,7 +50,10 @@ export default function SelectAppointmentPackage({navigation,route}) {
     function handleNext() {
         console.log(slot);
         appointmentServices.BookAppointment(data.doctor._id,getTime(),'video call',data.slot,'i am haveing headache',slot,day).then(
-            res=>{console.log(res.data);}
+            res=>{
+                console.log(res.data)
+                navigation.navigate('PaymentMethod',{phone:data.number})
+            }
         )
     }
     return (

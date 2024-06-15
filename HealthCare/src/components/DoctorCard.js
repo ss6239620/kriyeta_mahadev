@@ -4,6 +4,7 @@ import { color, colorTheme } from '../constant'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 import { useNavigation } from '@react-navigation/native'
+import { imagesData } from '../assets/data/imageData'
 
 export default function DoctorCard({ isNavigate, isButtonRequired, data }) {
   const navigation = useNavigation()
@@ -14,8 +15,8 @@ export default function DoctorCard({ isNavigate, isButtonRequired, data }) {
       <View style={{ flexDirection: 'row', margin: 15 }}>
         <View style={{ marginRight: 12, flex: 1 }}>
           <View style={{ marginBottom: 8 }}>
-            <Text style={styles.boldText}>{data.name.length < 20 ? data.name : data.name.slice(0, 20) + "..."}</Text>
-            <Text style={styles.smallText}>{data.job}</Text>
+            <Text style={styles.boldText}>{data.doctor.name.length < 30 ? data.doctor.name : data.name.slice(0, 30) + "..."}</Text>
+            <Text style={styles.smallText}>{data.specialization}</Text>
           </View>
           <View style={{ flexDirection: 'row' }}>
             <Icon name="star" size={20} color={'#EF802F'} style={{ marginRight: 10, marginTop: 6 }} />
@@ -27,7 +28,7 @@ export default function DoctorCard({ isNavigate, isButtonRequired, data }) {
         </View>
         <View style={{ display: 'flex', flex: 0.8, alignItems: 'center', justifyContent: 'center' }}>
           <View style={{ alignItems: 'center', height: 100, width: 150 }}>
-            <Image source={data.image} style={styles.image} />
+            <Image source={{ uri: imagesData[Math.floor(Math.random() * imagesData.length)] }} style={styles.image} />
           </View>
         </View>
       </View>

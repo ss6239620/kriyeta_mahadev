@@ -37,7 +37,7 @@ const blueText = {
 
 const API_URL = 'http://localhost:5000/api'  //main api url
 
-const FILE_API_URL='https://backend-telehealth.onrender.com/api'
+const FILE_API_URL='http://localhost:5000/api'
 
 const API_AIML_URL = 'http://sharvesh211.pythonanywhere.com'
 

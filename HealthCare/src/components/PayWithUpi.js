@@ -3,15 +3,11 @@ import { sendSmsData } from './SendSMS'
 
 
 
-function handleSMS(params) {
+function handleSMS(phone) {
     const dat= new Date().getDate()
     const SMSDATA = [
         {
-            phone: '7718833236',
-            msg: `Your appointment has been scheduled`
-        },
-        {
-            phone: '9869852633',
+            phone: `${phone}`,
             msg: `346773 this is code for video chat with patient at time ${dat}`
         },
     ]
@@ -20,7 +16,7 @@ function handleSMS(params) {
     sendSmsData(SMSDATA)
 }
 
-function PayNow(params) {
+function PayNow(phone) {
     RNUpiPayment.initializePayment(
         {
             vpa: '9869852633@postbank', // or can be john@ybl or mobileNo@upi
@@ -36,7 +32,7 @@ function PayNow(params) {
     }
     function failureCallback(data) {
         console.log('i am fail');
-        handleSMS()
+        handleSMS(phone)
         console.log(data);
     }
 }

@@ -68,9 +68,11 @@ export default function BookAppointment({ navigation, route }) {
     }
 
     const text = data.availibility.split(',');
-    const timeSlot = data.slot.split(' ');
 
-    //   generate15MinBlocks(text[0],text[1]).forEach(([s, e]) => console.log(`Start: ${formatTime(s)}, End: ${formatTime(e)}`));
+    const timeSlot = data.slot.split(' ');
+    
+
+    // generate15MinBlocks(text[0], text[1],15).forEach(([s, e]) => console.log(`Start: ${formatTime(s)}, End: ${formatTime(e)}`));
     return (
         <View style={styles.container}>
             <ScrollView>
@@ -253,10 +255,9 @@ export default function BookAppointment({ navigation, route }) {
                             ([s, e], index) => {
                                 const backgroundColor = notavailable.includes(`${formatTime(s)} - ${formatTime(e)}`) ? colorTheme.borderColor : 'white'
                                 return (
-                                    <>
-                                    { backgroundColor==='white' && <TouchableOpacity
+                                    <View key={index}>
+                                        {backgroundColor === 'white' ? <TouchableOpacity
                                             onPress={() => settime(`${formatTime(s)} - ${formatTime(e)}`)}
-                                            key={index}
                                             style={[{
                                                 flexDirection: 'row',
                                                 justifyContent: 'space-between',
@@ -270,10 +271,9 @@ export default function BookAppointment({ navigation, route }) {
                                             }, {}]}>
                                             <Text style={[styles.smallText, { fontSize: 15 }]}>{`${formatTime(s)} - ${formatTime(e)}`}</Text>
                                             <Text>A</Text>
-                                        </TouchableOpacity>}
-                                        { backgroundColor===colorTheme.borderColor && <View
+                                        </TouchableOpacity>:null}
+                                        {backgroundColor === colorTheme.borderColor ? <View
                                             onPress={() => settime(`${formatTime(s)} - ${formatTime(e)}`)}
-                                            key={index}
                                             style={[{
                                                 flexDirection: 'row',
                                                 justifyContent: 'space-between',
@@ -287,8 +287,8 @@ export default function BookAppointment({ navigation, route }) {
                                             }, {}]}>
                                             <Text style={[styles.smallText, { fontSize: 15 }]}>{`${formatTime(s)} - ${formatTime(e)}`}</Text>
                                             <Text>A</Text>
-                                        </View>}
-                                    </>
+                                        </View>:null}
+                                    </View>
                                 )
                             },
                         )}

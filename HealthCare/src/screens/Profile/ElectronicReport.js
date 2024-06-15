@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Button, StyleSheet, Text, TextInput, TouchableOpacity, Image, ScrollView, Pressable, ActivityIndicator } from 'react-native';
 import DocumentPicker from 'react-native-document-picker';
-import { API_URL, FILE_API_URL } from '../../constant';
+import { API_URL } from '../../constant';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Header from '../../components/Header';
 import { blackText, blueText, colorTheme, grayText } from '../../constant';
@@ -48,7 +48,7 @@ const ElectronicReport = () => {
 
     try {
       const token = await AsyncStorage.getItem("userToken");
-      const response = await fetch(`${FILE_API_URL}/user/postehr`, {
+      const response = await fetch(`${API_URL}/user/postehr`, {
         method: 'POST',
         body: formData,
         headers: {
@@ -74,12 +74,12 @@ const ElectronicReport = () => {
           'auth-token': token,
         }
       }
-      const res = await axios.get(`${FILE_API_URL}/user/getallmyehr`, config)
+      const res = await axios.get(`${API_URL}/user/getallmyehr`, config)
       console.log(res.data);
       setfilesData(res.data)
       setfileFetched(true)
     } catch (error) {
-      console.log(error.response.data);
+      console.log(error.response);
     }
   }
   async function updatePermission(id) {
@@ -151,7 +151,7 @@ const ElectronicReport = () => {
                 </Pressable>
                 <View style={{ marginLeft: 10, width: '90%' }}>
                   <Text style={[styles.bigText, { fontSize: 15 }]}>{dat.title}t</Text>
-                  <OpenLink url={`https://backend-telehealth.onrender.com/uploads/${dat.path}`} />
+                  <OpenLink url={`http://localhost:5000/uploads/${dat.path}`} />
                   <Text style={[styles.smallText, { fontSize: 12, }, dat.permission === 'private' ? { color: 'green' } : { color: 'red' }]}>{dat.permission}</Text>
                 </View>
               </View>
