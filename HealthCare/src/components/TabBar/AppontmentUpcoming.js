@@ -48,10 +48,10 @@ export default function Appointment({ navigation }) {
           </View>
           <Text style={[styles.bigText, { marginTop: 15 }]}>Remainder</Text>
           <Text style={styles.smallText}>Dont forget schedule for upcoming appointment </Text>
-          <View style={{ marginTop: 15, marginBottom: 15 }}>
+          <View style={{ marginTop: 15, marginBottom: 15, }}>
             <AppointmentCard navigation={navigation} isButtonRequired data={data[0]} />
           </View>
-          <View style={{ marginTop: 15, marginBottom: 15 }}>
+          <View style={{ marginTop: 15, marginBottom: 15, }}>
             <AppointmentCard navigation={navigation} isButtonRequired data={data[1]}  />
           </View>
         </View>

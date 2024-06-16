@@ -33,16 +33,6 @@ const profileIcon = [
     screen: 'EditProfile'
   },
   {
-    name: 'credit-card',
-    title: 'Payment Methods',
-    screen: 'PaymentMethod'
-  },
-  {
-    name: 'heart-outline',
-    title: 'Favourite',
-    screen: 'Favorites'
-  },
-  {
     name: 'file-document',
     title: 'Electronic Report Upload',
     screen: 'ElectronicReport'

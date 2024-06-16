@@ -10,7 +10,7 @@ export default function HospitalProfileCard({ isNavigate, isHeartTrue }) {
     const [like, setlike] = useState(isHeartTrue)
     const navigation = useNavigation()
     return (
-        <Pressable style={styles.subContainer} onPress={(() => isNavigate ? navigation.navigate('Hospital') : null)}>
+        <Pressable style={styles.subContainer} >
             <ImageBackground source={require('../assets/img/hospital.jpg')} resizeMode='cover' style={{ flex: 1, height: 150 }} borderTopLeftRadius={30} borderTopRightRadius={30}>
                 <View style={{ backgroundColor: 'white', borderRadius: 50, width: '50%', position: 'absolute', bottom: 10, right: 10, paddingHorizontal: 10, paddingVertical: 1 }}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>

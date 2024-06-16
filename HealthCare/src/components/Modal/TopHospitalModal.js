@@ -44,7 +44,7 @@ const TopHospitalModal = ({ modalVisible, setModalVisible }) => {
                 <View style={styles.footer}>
                 </View>
             </View>
-        </Modal >
+        </Modal>
     );
 };
 

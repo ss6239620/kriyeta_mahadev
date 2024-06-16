@@ -46,7 +46,6 @@ export default function AppointmentCard({ isNavigate, isButtonRequired, data }) 
           <TouchableOpacity
             style={{ backgroundColor: colorTheme.primaryColor, width: 120, height: 40, borderRadius: 50, justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: colorTheme.borderColor }}
             // onPress={() => { setIsReshedule(true) }}
-            onPress={() => { navigation.navigate('RescheduledAppointment') }}
           >
             <Text style={{ color: "white" }}>Reschedule</Text>
           </TouchableOpacity>
@@ -83,7 +82,8 @@ const styles = StyleSheet.create({
     height: "auto",
     borderRadius: 10,
     elevation: 5,
-    width: 350
+    width: '100%',
+    alignSelf:'center'
   },
   image: {
     width: 100,
