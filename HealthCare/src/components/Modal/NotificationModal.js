@@ -1,20 +1,22 @@
-import { ActivityIndicator, Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native'
+import { ActivityIndicator, Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { API_URL, blackText, blueText, colorTheme, grayText } from '../../constant'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import Ionicons from 'react-native-vector-icons/Ionicons'
+import Entypo from 'react-native-vector-icons/Entypo'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import axios from 'axios'
 
 
 
 const NotificationModal = ({ modalVisible, setModalVisible }) => {
-    const [search, setSearch] = useState('')
-    const [isRead, setIsRead] = useState(false)
+    // const [search, setSearch] = useState('')
+    // const [isRead, setIsRead] = useState(false)
     const [notifyData, setnotifyData] = useState([])
     const [fetchnotification, setfetchnotification] = useState(false)
     const [fetchrequestPermission, setfetchrequestPermission] = useState([])
     const [loadrequest, setloadrequest] = useState(false)
+
 
     function Notification({ iconBackGroundColor, iconColor, iconName, Date, isDate, data, request }) {
         return (
@@ -50,16 +52,26 @@ const NotificationModal = ({ modalVisible, setModalVisible }) => {
                             </View>
                             : null
                         }
-                        <View style={{ flexDirection: "row", elevation: 1, borderRadius: 10, padding: 10, marginBottom: 10, backgroundColor: 'white'  }}>
+                        <View style={{ flexDirection: "row", elevation: 1, borderRadius: 10, padding: 10, marginBottom: 10, backgroundColor: 'white' }}>
                             <View style={{ backgroundColor: iconBackGroundColor, borderRadius: 50, width: 50, height: 50 }}>
                                 <MaterialIcons name={iconName} size={20} color={iconColor} style={{ padding: 15 }} />
                             </View>
-                            <View style={{ width: '80%', marginLeft: 10 }}>
-                                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                                    <Text style={styles.bigText}>{'Dr. Akash'}</Text>
-                                    <Text style={{}}>1h</Text>
+                            <View style={{ width: '80%', marginLeft: 10, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <View style={{}}>
+                                    <Text style={styles.bigText}>{data.doctor.name}</Text>
+                                    <Text style={[styles.smallText,]}>{data.doctor.email}</Text>
+                                    {/* <Text style={{}}>1h</Text> */}
                                 </View>
-                                <Text style={[styles.smallText,]}>{'akash@gmail.com'}</Text>
+                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                    <TouchableOpacity
+                                    onPress={()=>updatePermission(data.ehr)}
+                                     style={{ borderWidth: 1, borderColor: colorTheme.borderColor, borderRadius: 50, padding: 5, marginRight: 10 }}>
+                                        <MaterialIcons name='check' size={25} color='green' />
+                                    </TouchableOpacity>
+                                    <TouchableOpacity style={{ borderWidth: 1, borderColor: colorTheme.borderColor, borderRadius: 50, padding: 5 }}>
+                                        <Entypo name='cross' size={25} color='red' />
+                                    </TouchableOpacity>
+                                </View>
                             </View>
                         </View>
                     </View>
@@ -125,6 +137,26 @@ const NotificationModal = ({ modalVisible, setModalVisible }) => {
             console.log(error.response.data);
         }
     }
+
+    async function updatePermission(id) {
+        try {
+            const token = await AsyncStorage.getItem("userToken");
+            const config = {
+                headers: {
+                    'auth-token': token,
+                }
+            }
+            const body = {
+                'ehr': id
+            }
+            const res = await axios.post(`${API_URL}/user/editpermission`, body, config)
+            console.log('permission---->', res.data);
+            // After updating permission, fetch all files again
+        } catch (error) {
+            console.log(error.response.data);
+        }
+    }
+
     useEffect(() => {
         getAllNotification()
         getPermissionRequest()

@@ -4,17 +4,17 @@ import { blackText, blueText, colorTheme, grayText } from '../../constant';
 import Header from '../../components/Header';
 import WebView from 'react-native-webview';
 
-const SymptompAnalyzer = () => {
+const ChatBotSymptomp = () => {
     return (
         <View style={styles.container}>
             {/* Header */}
             <View style={styles.header}>
-                <Header leftIconName header={'Symptoms Analysis'} titleMargin={30}/>
+                <Header leftIconName header={'Chat With Bot'} titleMargin={30}/>
             </View>
             {/* Main Content */}
             <View style={styles.content}>
                 <WebView
-                    source={{ uri: 'https://diseaseanalysisfromsymptoms-telehealth.streamlit.app/' }}
+                    source={{ uri: 'https://chatbot-jxtoy8vltjcv7hfgmappvqy.streamlit.app/' }}
                     style={{ flex: 1 }}
                     originWhitelist={['*']}
                     scalesPageToFit={true}
@@ -82,4 +82,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default SymptompAnalyzer;
+export default ChatBotSymptomp;

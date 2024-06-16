@@ -9,7 +9,6 @@ export default function App({ navigation }) {
     setTimeout(async () => {
       const usertoken = await AsyncStorage.getItem("userToken");
       const docToken = await AsyncStorage.getItem("doctorToken");
-      const doctor = await AsyncStorage.getItem("isDoctor");
 
       // const isDoctor = JSON.parse(doctor)
       usertoken ?

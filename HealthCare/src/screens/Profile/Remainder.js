@@ -1,26 +1,38 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { blackText, blueText, colorTheme, grayText } from '../../constant';
 import Header from '../../components/Header';
-import WebView from 'react-native-webview';
+import AlarmTimeInput from '../../components/TextInputs/AlarmTimeInput';
+import { notificationPopUp } from '../../components/NotificationPopUp';
 
-const SymptompAnalyzer = () => {
+const Remainder = () => {
+    const [time, settime] = useState({
+        alarm: 0
+    })
+    const handleTimeChange = (name, value) => {
+        settime(prevState => ({
+            ...prevState,
+            [name]: value,
+        }));
+    };
     return (
         <View style={styles.container}>
             {/* Header */}
             <View style={styles.header}>
-                <Header leftIconName header={'Symptoms Analysis'} titleMargin={30}/>
+                <Header leftIconName header={'Remainder'} titleMargin={30} />
             </View>
             {/* Main Content */}
             <View style={styles.content}>
-                <WebView
-                    source={{ uri: 'https://diseaseanalysisfromsymptoms-telehealth.streamlit.app/' }}
-                    style={{ flex: 1 }}
-                    originWhitelist={['*']}
-                    scalesPageToFit={true}
-                    javaScriptEnabled={true}
-                    domStorageEnabled={true}
-                />
+                    <AlarmTimeInput
+                        isRequire={false}
+                        textInputParams={'alarm'}
+                        handleChange={handleTimeChange}
+                    />
+                    <TouchableOpacity 
+                    onPress={()=>notificationPopUp.onDisplayNotification(time.alarm)}
+                    style={{padding:15,backgroundColor:colorTheme.primaryColor,borderRadius:10,marginTop:20,alignItems:'center'}}>
+                        <Text style={[styles.smallText,{color:'white'}]}>Set Remainder</Text>
+                    </TouchableOpacity>
             </View>
         </View>
     );
@@ -41,6 +53,7 @@ const styles = StyleSheet.create({
         flex: 1,
         width: '90%',
         alignSelf: 'center',
+        justifyContent:'center'
     },
     footer: {
         padding: 10,
@@ -82,4 +95,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default SymptompAnalyzer;
+export default Remainder;

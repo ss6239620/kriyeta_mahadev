@@ -1,7 +1,7 @@
 import { ActivityIndicator, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { API_URL, colorTheme, blackText, grayText, blueText } from '../../constant';
+import { API_URL, colorTheme, blackText, grayText, blueText, FILE_API_URL } from '../../constant';
 import axios from 'axios';
 import Header from '../../components/Header';
 import OpenLink from '../../components/OpenLink';
@@ -80,7 +80,7 @@ export default function PatientDocument({ navigation, route }) {
                                         <Text>{data.user.name}</Text>
                                         <Text>{data.user.email}</Text>
                                     </View>
-                                    {data.permission === 'public' && <View style={{marginTop:10}}><OpenLink url={`https://backend-telehealth.onrender.com/uploads/${data.ehr}`} /></View>}
+                                    {data.permission === 'public' && <View style={{marginTop:10}}><OpenLink url={`${FILE_API_URL}/uploads/${data.ehr}`} /></View>}
 
                                     {data.permission === 'private' &&
                                         <TouchableOpacity

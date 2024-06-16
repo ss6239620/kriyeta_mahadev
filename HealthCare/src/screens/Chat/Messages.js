@@ -90,7 +90,7 @@ function MessageBox({ data, isUser }) {
                     <Text>{data.time} Pm</Text>
                 </View>
             </View>
-        </View >
+        </View>
     )
 }
 
@@ -101,7 +101,7 @@ export default function Message() {
     const socket = useRef()
 
     useEffect(() => {
-        socket.current = SocketIoClient('https://healthcare-3o61.onrender.com/')
+        socket.current = SocketIoClient('https://vanilla-towering-canopy.glitch.me')
         socket.current.on('connect', () => {
             console.log('connected to server');
         })

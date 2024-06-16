@@ -12,6 +12,7 @@ import PendingDoctorTab from '../../components/TabBar/PendingDoctorTab'
 import AcceptDoctorTab from '../../components/TabBar/AcceptDoctorTab'
 import RejectedDoctorTab from '../../components/TabBar/RejectedDoctorTab'
 import LottieView from 'lottie-react-native'
+import { notificationPopUp } from '../../components/NotificationPopUp'
 
 
 const bubbleButton = [
@@ -109,6 +110,7 @@ export default function DoctorHome({ navigation }) {
     }
     async function getAllAppointment() {
         try {
+            console.log('inside appointment');
             setappointmentLoad(false)
             const token = await AsyncStorage.getItem("doctorToken");
             console.log('token-->', token);
@@ -119,12 +121,13 @@ export default function DoctorHome({ navigation }) {
             }
 
             const res = await axios.get(`${API_URL}/doctor/fetchallappoinments`, config)
-            // console.log('appointment---->', res.data);
+            console.log('appointment---->', res.data);
             // After updating permission, fetch all files again
             setappointmentData(res.data)
             setappointmentLoad(true)
         } catch (error) {
-            console.log(error.response);
+            console.log('error');
+            console.log(error.response.data);
         }
     }
 
@@ -154,40 +157,6 @@ export default function DoctorHome({ navigation }) {
         getAllAppointment()
     }, [])
 
-    const ApointmentCard = ({ data }) => {
-        return (
-            <Pressable
-                onPress={() => { navigation.navigate('DoctorAppointmentDetailScreen', { data: data }) }}
-                style={{
-                    backgroundColor: 'white',
-                    borderRadius: 10,
-                    marginVertical: 20,
-                    elevation: 3,
-                    width: '98%',
-                    alignSelf: 'center'
-                }}>
-                <View style={{ flex: 1, flexDirection: 'row', margin: 15 }}>
-                    <Image source={require('../../assets/img/health.jpg')} style={{
-                        width: '40%',
-                        height: '100%',
-                        marginRight: 5,
-                        borderRadius: 10
-                    }} />
-                    <View
-                        style={{ flex: 1, flexDirection: 'column' }}
-                    >
-                        <Text numberOfLines={2} style={[styles.boldText, { flexShrink: 1, fontSize: 15, fontWeight: '700' }]}>{data.user.name}</Text>
-                        <Text numberOfLines={3} style={[styles.grayText, { flexShrink: 1, fontSize: 12 }]}>
-                            {data.user.email}
-                        </Text>
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                            <Text style={[styles.smallText,]}>{data.slot}</Text>
-                        </View>
-                    </View>
-                </View>
-            </Pressable>
-        )
-    }
 
     const [search, setsearch] = useState('')
     return (
@@ -211,7 +180,7 @@ export default function DoctorHome({ navigation }) {
                     />
                 </View>
                 <View style={{ flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: 20 }}>
-                    <Text style={styles.bigText}>Today</Text>
+                    <Text onPress={notificationPopUp.notification} style={styles.bigText}>Today</Text>
                     <TouchableOpacity
                         onPress={handleLogout}
                         style={{ flexDirection: "row", justifyContent: "center", alignItems: "center", width: 96, height: 30, backgroundColor: colorTheme.primaryColor, borderRadius: 50 }}>

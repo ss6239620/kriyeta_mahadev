@@ -47,6 +47,8 @@ import DoctorAppointmentDetailScreen from '../Doctor/DoctorAppointmentDetailScre
 import SymptompAnalyzer from '../Doctor/SymptompAnalyzer'
 import AdvancedAnalyzer from '../Doctor/AdvancedAnalyzer'
 import PatientDocument from '../Doctor/PatientDocument'
+import Remainder from '../Profile/Remainder'
+import ChatBotSymptomp from '../Chat/ChatBotSymptomp'
 
 const Stack = createNativeStackNavigator()
 
@@ -90,10 +92,11 @@ export default function App() {
         <Stack.Screen name='Olddisease' component={Olddisease} options={{ headerShown: false }} />
         <Stack.Screen name='DoctorLogin' component={DoctorLogin} options={{ headerShown: false }} />
         <Stack.Screen name='DoctorCompleteProfile' component={DoctorCompleteProfile} options={{ headerShown: false }} />
+        <Stack.Screen name='Remainder' component={Remainder} options={{ headerShown: false }} />
         <Stack.Screen name='DoctorChatRoom' component={DoctorChatRoom} options={{ headerShown: false }} />
         <Stack.Screen name='DoctorPrescription' component={DoctorPrescription} options={{ headerShown: false }} />
         <Stack.Screen name='PatientDataAnalysis' component={PatientDataAnalysis} options={{ headerShown: false }} />
-        <Stack.Screen name='ChatBot' component={ChatBot} options={{ headerShown: false }} />
+        <Stack.Screen name='ChatBot' component={ChatBotSymptomp} options={{ headerShown: false }} />
         <Stack.Screen name='ElectronicReport' component={ElectronicReport} options={{ headerShown: false }} />
         <Stack.Screen name='PatientInfo' component={PatientInfo} options={{ headerShown: false }} />
         <Stack.Screen name='SymptompAnalyzer' component={SymptompAnalyzer} options={{ headerShown: false }} />

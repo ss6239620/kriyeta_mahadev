@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, Button, StyleSheet, Text, TextInput, TouchableOpacity, Image, ScrollView, Pressable, ActivityIndicator } from 'react-native';
 import DocumentPicker from 'react-native-document-picker';
-import { API_URL } from '../../constant';
+import { API_URL, FILE_API_URL } from '../../constant';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Header from '../../components/Header';
 import { blackText, blueText, colorTheme, grayText } from '../../constant';
@@ -151,7 +151,7 @@ const ElectronicReport = () => {
                 </Pressable>
                 <View style={{ marginLeft: 10, width: '90%' }}>
                   <Text style={[styles.bigText, { fontSize: 15 }]}>{dat.title}t</Text>
-                  <OpenLink url={`http://localhost:5000/uploads/${dat.path}`} />
+                  <OpenLink url={`${FILE_API_URL}/uploads/${(dat.path)}`} />
                   <Text style={[styles.smallText, { fontSize: 12, }, dat.permission === 'private' ? { color: 'green' } : { color: 'red' }]}>{dat.permission}</Text>
                 </View>
               </View>

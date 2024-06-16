@@ -13,7 +13,6 @@ import { blackText, blueText, colorTheme, grayText } from '../../constant';
 import Header from '../../components/Header';
 import { doctorServices } from '../../services/doctorAuth';
 import { sendSmsData } from '../../components/SendSMS';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import TimeTextInput from '../../components/TextInputs/TimeInput';
 import DropDownInput from '../../components/TextInputs/DropDownInput';
 import { DoctorType, GovernmentOfficer, SlotData, Specialization } from '../../assets/data/DropDown';

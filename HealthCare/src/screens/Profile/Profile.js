@@ -48,6 +48,11 @@ const profileIcon = [
     screen: 'ElectronicReport'
   },
   {
+    name: 'alarm',
+    title: 'Remainder',
+    screen: 'Remainder'
+  },
+  {
     name: 'video',
     title: 'View Offline Videos',
     screen: 'OfflineVideo'

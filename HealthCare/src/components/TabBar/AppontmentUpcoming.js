@@ -2,7 +2,7 @@ import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import { blackText, blueText, colorTheme, grayText } from '../../constant'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
-import DoctorCard from '../../components/DoctorCard'
+import AppointmentCard from '../AppointmentCard'
 
 const days = ["Mon", "Tue", "Wed", "Th", "Fr", "Sat", "Sun"]
 const data = [
@@ -49,10 +49,10 @@ export default function Appointment({ navigation }) {
           <Text style={[styles.bigText, { marginTop: 15 }]}>Remainder</Text>
           <Text style={styles.smallText}>Dont forget schedule for upcoming appointment </Text>
           <View style={{ marginTop: 15, marginBottom: 15 }}>
-            <DoctorCard navigation={navigation} isButtonRequired data={data[0]} />
+            <AppointmentCard navigation={navigation} isButtonRequired data={data[0]} />
           </View>
           <View style={{ marginTop: 15, marginBottom: 15 }}>
-            <DoctorCard navigation={navigation} isButtonRequired data={data[1]} />
+            <AppointmentCard navigation={navigation} isButtonRequired data={data[1]}  />
           </View>
         </View>
       </ScrollView>

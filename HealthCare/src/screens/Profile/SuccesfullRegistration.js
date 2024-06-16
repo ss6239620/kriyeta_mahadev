@@ -3,15 +3,20 @@ import React, { useEffect } from 'react'
 import { colorTheme, blackText, blueText, grayText } from '../../constant'
 import LottieView from 'lottie-react-native'
 import { useNavigation } from '@react-navigation/native'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 
 export default function SuccessFullRegistration() {
-    const navigation=useNavigation()
+    const navigation = useNavigation()
     useEffect(() => {
-        setTimeout(() => {
-          navigation.navigate("BottomTab")
+        setTimeout(async () => {
+            const usertoken = await AsyncStorage.getItem("userToken");
+            usertoken ?
+                navigation.navigate("BottomTab")
+                : navigation.navigate("DoctorHome")
+
         }, 1000);
-      }, [])
+    }, [])
     return (
         <View style={styles.container}>
             <LottieView

@@ -11,6 +11,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@notifee/react-native": "^7.8.2",
     "@ptomasroos/react-native-multi-slider": "^2.2.2",
     "@react-native-async-storage/async-storage": "^1.21.0",
     "@react-native-community/datetimepicker": "^8.1.0",
@@ -39,7 +40,7 @@
     "react-native-upi-payment": "^1.0.5",
     "react-native-vector-icons": "^10.0.3",
     "react-native-video": "^5.2.1",
-    "react-native-webrtc": "^1.94.2",
+    "react-native-webrtc": "1.94.2",
     "react-native-webview": "^13.6.3",
     "react-redux": "^9.0.4",
     "redux": "^5.0.1",

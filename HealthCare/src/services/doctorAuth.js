@@ -46,7 +46,7 @@ async function Login(email, password) {
 }
 
 async function ProfileComplete(uniqueid, specialization, experience, yrofgraduatio, type, loaction, about, fees, govno, phone,availibility,slot,days) {
-    const token = await AsyncStorage.getItem("userToken");
+    const token = await AsyncStorage.getItem("doctorToken");
     const body = {
         uniqueid: uniqueid,
         specialization: specialization,

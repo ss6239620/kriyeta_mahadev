@@ -35,9 +35,9 @@ const blueText = {
     fontWeight: "600",
 }
 
-const API_URL = 'http://localhost:5000/api'  //main api url
+const API_URL = 'https://spiffy-interesting-earth.glitch.me/api'  //main api url
 
-const FILE_API_URL='http://localhost:5000/api'
+const FILE_API_URL='https://spiffy-interesting-earth.glitch.me'
 
 const API_AIML_URL = 'http://sharvesh211.pythonanywhere.com'
 
