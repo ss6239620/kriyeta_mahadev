@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Platform,
   KeyboardAvoidingView,
@@ -7,9 +7,10 @@ import {
   View,
   Text,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
-import TextInputContainer from './TextInputContainer';
-import SocketIOClient from 'socket.io-client';
+import TextInputContainer from '../../components/VideoCallComponent/TextInputContainer';
+import IO from 'socket.io-client';
 import {
   mediaDevices,
   RTCPeerConnection,
@@ -17,98 +18,227 @@ import {
   RTCIceCandidate,
   RTCSessionDescription,
 } from 'react-native-webrtc';
-import IconContainer from './IconContainer';
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
-import InCallManager from 'react-native-incall-manager';
-import { navigate } from '../../services/navRef';
+// import InCallManager from 'react-native-incall-manager';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
+import IconContainer from '../../components/VideoCallComponent/IconContainer';
+import SliderMenu from '../../components/VideoCallComponent/SlideMenu/EndCallMenu';
+import MoreMenu from '../../components/VideoCallComponent/SlideMenu/moreMenu';
+import ChatHeader from '../../components/VideoCallComponent/Messages/ChatHeader';
+import ChatInput from '../../components/VideoCallComponent/Messages/ChatInput';
+import MessagesList from '../../components/VideoCallComponent/Messages/MessageList';
 
-export default function App({ }) {
+const HOST_URL = `https://advance-video-call.glitch.me`;
+
+export default function App() {
   const [localStream, setlocalStream] = useState(null);
-
-  const [remoteStream, setRemoteStream] = useState(null);
-
-  const [type, setType] = useState('JOIN');
-
-  const [callerId] = useState(
-    Math.floor(100000 + Math.random() * 900000).toString(),
-  );
-
-  const otherUserId = useRef(null);
-
-  const socket = SocketIOClient('https://cypress-magnificent-hubcap.glitch.me/', {
-    transports: ['websocket'],
-    query: {
-      callerId,
-    },
-  });
-
+  const [remoteStreams, setRemoteStreams] = useState([]);
+  const [type, setType] = useState('JoinScreen');
   const [localMicOn, setlocalMicOn] = useState(true);
-
   const [localWebcamOn, setlocalWebcamOn] = useState(true);
+  const [roomName, setRoomName] = useState('');
+  const [myname, setMyName] = useState('');
+  const [socketInstance, setSocket] = useState(null);
+  const [messages, setMessages] = useState([]);
 
-  const peerConnection = useRef(
-    new RTCPeerConnection({
-      iceServers: [
-        {
-          urls: 'stun:stun.l.google.com:19302',
-        },
-        {
-          urls: 'stun:stun1.l.google.com:19302',
-        },
-        {
-          urls: 'stun:stun2.l.google.com:19302',
-        },
-      ],
-    }),
-  );
+  let connections = [];
 
-  let remoteRTCMessage = useRef(null);
+  const peerConnectionConfig = {
+    iceServers: [
+      {urls: 'stun:stun.l.google.com:19302'},
+      {urls: 'stun:stun1.l.google.com:19302'},
+      {urls: 'stun:stun2.l.google.com:19302'},
+      {urls: 'stun:stun3.l.google.com:19302'},
+      {urls: 'stun:stun4.l.google.com:19302'},
+    ],
+  };
+
+  const gotRemoteStream = (stream, id) => {
+    setRemoteStreams(prevState => {
+      let arrIndex = prevState.findIndex(v => v.id === id);
+      if (arrIndex === -1) {
+        return [...prevState, {id: id, stream: stream}];
+      }
+      return [...prevState];
+    });
+  };
+
+  const gotMessageFromServer = (fromId, message, socket) => {
+    //Parse the incoming signal
+    var signal = JSON.parse(message);
+
+    //Make sure it's not coming from yourself
+    if (fromId != socket.id) {
+      if (signal.sdp) {
+        connections[fromId]
+          .setRemoteDescription(new RTCSessionDescription(signal.sdp))
+          .then(() => {
+            if (signal.sdp.type == 'offer') {
+              connections[fromId]
+                .createAnswer()
+                .then(description => {
+                  connections[fromId]
+                    .setLocalDescription(description)
+                    .then(() => {
+                      socket.emit(
+                        'signal',
+                        fromId,
+                        JSON.stringify({
+                          sdp: connections[fromId].localDescription,
+                        }),
+                      );
+                    })
+                    .catch(e => console.log(e));
+                })
+                .catch(e => console.log(e));
+            }
+          })
+          .catch(e => console.log(e));
+      }
+
+      if (signal.ice) {
+        connections[fromId]
+          .addIceCandidate(new RTCIceCandidate(signal.ice))
+          .catch(e => console.log(e));
+      }
+    }
+  };
 
   useEffect(() => {
-    socket.on('newCall', data => {
-      remoteRTCMessage.current = data.rtcMessage;
-      otherUserId.current = data.callerId;
-      setType('INCOMING_CALL');
-    });
+    console.log('remoteStreams', remoteStreams.length);
+  }, [remoteStreams]);
 
-    socket.on('callAnswered', data => {
-      remoteRTCMessage.current = data.rtcMessage;
-      peerConnection.current.setRemoteDescription(
-        new RTCSessionDescription(remoteRTCMessage.current),
-      );
-      setType('WEBRTC_ROOM');
-    });
+  useEffect(() => {
+    if (localStream) {
+      const socket = IO(HOST_URL);
+      setSocket(socket);
 
-    socket.on('ICEcandidate', data => {
-      let message = data.rtcMessage;
+      socket.emit('join-room', roomName, myname);
+      socket.on('signal', (fromId, message) => {
+        gotMessageFromServer(fromId, message, socket);
+      });
 
-      if (peerConnection.current) {
-        peerConnection?.current
-          .addIceCandidate(
-            new RTCIceCandidate({
-              candidate: message.candidate,
-              sdpMid: message.id,
-              sdpMLineIndex: message.label,
-            }),
-          )
-          .then(data => {
-            console.log('SUCCESS');
-          })
-          .catch(err => {
-            console.log('Error', err);
+      socket.on('connect_error', err => {
+        console.log(`connect_error due to ${err.message}`);
+      });
+      socket.on('connect', () => {
+        console.log('connected');
+
+        socket.on('user-joined', (id, clients, username) => {
+          if (id !== socket.id) {
+            // show notification
+            console.log(`${username} joined the meeting`);
+
+            setTimeout(() => {
+              socket.emit('message', {isMuted: !localMicOn});
+              socket.emit('message', {isVideoMuted: !localWebcamOn});
+            }, 1000);
+          }
+
+          clients.forEach(socketListId => {
+            if (!connections[socketListId]) {
+              connections[socketListId] = new RTCPeerConnection(
+                peerConnectionConfig,
+              );
+
+              //Wait for their ice candidate
+              connections[socketListId].onicecandidate = event => {
+                if (event.candidate != null) {
+                  console.log('SENDING ICE');
+                  socket.emit(
+                    'signal',
+                    socketListId,
+                    JSON.stringify({ice: event.candidate}),
+                  );
+                }
+              };
+
+              connections[socketListId].ontrack = ev => {
+                gotRemoteStream(ev.streams[0], socketListId);
+              };
+
+              localStream.getTracks().forEach(track => {
+                connections[socketListId].addTrack(track, localStream);
+              });
+            }
           });
-      }
-    });
 
-    let isFront = false;
+          //Create an offer to connect with your local description
 
+          if (clients.length >= 2) {
+            connections[id].createOffer().then(description => {
+              connections[id]
+                .setLocalDescription(description)
+                .then(() => {
+                  socket.emit(
+                    'signal',
+                    id,
+                    JSON.stringify({sdp: connections[id].localDescription}),
+                  );
+                })
+                .catch(e => console.log(e));
+            });
+          }
+        });
+      });
+
+      socket.on('user-left', (id, username) => {
+        console.log('user-left', id);
+        let streamsArr = remoteStreams.filter(v => v.id !== id);
+        setRemoteStreams(streamsArr);
+        // show notification
+        console.log(`${username} left the meeting`);
+      });
+
+      socket.on('endCallForAll', () => {
+        endCall();
+      });
+
+      socket.on('createMessage', (message, id) => {
+        const isLeft = socket.id === id;
+        setMessages(prevState => [...prevState, {isLeft, ...message}]);
+      });
+
+      socket.on('broadcast-message', (id, message, username) => {
+        if (message.hasOwnProperty('isMuted')) {
+          if (message.isMuted) {
+            console.log('Audio Muted', id);
+          } else {
+            console.log('Audio UnMuted', id);
+          }
+        } else if (message.hasOwnProperty('isVideoMuted')) {
+          if (message.isVideoMuted) {
+            console.log('video off', id);
+          } else {
+            console.log('video on', id);
+          }
+        } else if (message.hasOwnProperty('isScreenShare')) {
+          if (message.isScreenShare) {
+            console.log('screenshare started', id);
+          } else {
+            console.log('screenshare stopped', id);
+          }
+        }
+      });
+
+      return () => {
+        socket.off('connect');
+        socket.off('signal');
+        socket.off('user-joined');
+        socket.off('user-left');
+        socket.off('endCallForAll');
+      };
+    }
+  }, [localStream]);
+
+  const startCall = () => {
+    let isFront = true;
     mediaDevices.enumerateDevices().then(sourceInfos => {
       let videoSourceId;
       for (let i = 0; i < sourceInfos.length; i++) {
         const sourceInfo = sourceInfos[i];
         if (
           sourceInfo.kind == 'videoinput' &&
-          sourceInfo.facing == (isFront ? 'user' : 'environment')
+          sourceInfo.facing == (isFront ? 'front' : 'environment')
         ) {
           videoSourceId = sourceInfo.deviceId;
         }
@@ -116,58 +246,28 @@ export default function App({ }) {
 
       mediaDevices
         .getUserMedia({
-          audio: true,
+          audio: false,
           video: {
             mandatory: {
-              minWidth: 500, // Provide your own width, height and frame rate here
+              minWidth: 500,
               minHeight: 300,
               minFrameRate: 30,
             },
             facingMode: isFront ? 'user' : 'environment',
-            optional: videoSourceId ? [{ sourceId: videoSourceId }] : [],
+            optional: videoSourceId ? [{sourceId: videoSourceId}] : [],
           },
         })
         .then(stream => {
-          // Got stream!
-
           setlocalStream(stream);
-
-          // setup stream listening
-          peerConnection.current.addStream(stream);
         })
         .catch(error => {
-          // Log error
+          console.log(error);
         });
     });
-
-    peerConnection.current.onaddstream = event => {
-      setRemoteStream(event.stream);
-    };
-
-    // Setup ice handling
-    peerConnection.current.onicecandidate = event => {
-      if (event.candidate) {
-        sendICEcandidate({
-          calleeId: otherUserId.current,
-          rtcMessage: {
-            label: event.candidate.sdpMLineIndex,
-            id: event.candidate.sdpMid,
-            candidate: event.candidate.candidate,
-          },
-        });
-      } else {
-        console.log('End of candidates.');
-      }
-    };
-
-    return () => {
-      socket.off('newCall');
-      socket.off('callAnswered');
-      socket.off('ICEcandidate');
-    };
-  }, []);
+  };
 
   useEffect(() => {
+    /*
     InCallManager.start();
     InCallManager.setKeepScreenOn(true);
     InCallManager.setForceSpeakerphoneOn(true);
@@ -175,40 +275,72 @@ export default function App({ }) {
     return () => {
       InCallManager.stop();
     };
+    */
+    // setType('WEBRTC_ROOM');
+    // startCall()
   }, []);
 
-  function sendICEcandidate(data) {
-    socket.emit('ICEcandidate', data);
-  }
-
-  async function processCall() {
-    const sessionDescription = await peerConnection.current.createOffer();
-    await peerConnection.current.setLocalDescription(sessionDescription)
-    sendCall({
-      calleeId: otherUserId.current,
-      rtcMessage: sessionDescription,
+  const switchCamera = () => {
+    localStream.getVideoTracks().forEach(track => {
+      track._switchCamera();
     });
-  }
+  };
 
-  async function processAccept() {
-    peerConnection.current.setRemoteDescription(
-      new RTCSessionDescription(remoteRTCMessage.current),
+  const toggleMediaStream = (type, state) => {
+    localStream.getTracks().forEach(track => {
+      if (track.kind === type) {
+        // eslint-disable-next-line no-param-reassign
+        track.enabled = !state;
+      }
+    });
+  };
+
+  const toggleMic = () => {
+    socketInstance.emit('message', {isMuted: localMicOn});
+    toggleMediaStream('audio', localMicOn);
+    setlocalMicOn(prev => !prev);
+  };
+
+  const toggleCamera = () => {
+    socketInstance.emit('message', {isVideoMuted: localWebcamOn});
+    toggleMediaStream('video', localWebcamOn);
+    setlocalWebcamOn(prev => !prev);
+  };
+
+  const endCall = () => {
+    socketInstance.disconnect();
+    connections = [];
+    setRoomName('');
+    setMessages([]);
+    setRemoteStreams([]);
+    setlocalStream(null);
+    setType('JoinScreen');
+  };
+
+  const endCallForAll = () => {
+    socketInstance.emit('endCallForAll', '');
+    endCall();
+  };
+
+  const ChatScreen = () => {
+    const onSendMsg = msg => {
+      socketInstance.emit('messagesend', {name: myname, content: msg});
+    };
+
+    return (
+      <View style={{flex: 1}}>
+        <ChatHeader
+          username={myname}
+          picture={''}
+          onPress={() => {
+            setType('WEBRTC_ROOM');
+          }}
+        />
+        <MessagesList messages={messages} />
+        <ChatInput onSendIconClick={onSendMsg} />
+      </View>
     );
-    const sessionDescription = await peerConnection.current.createAnswer();
-    await peerConnection.current.setLocalDescription(sessionDescription)
-    answerCall({
-      callerId: otherUserId.current,
-      rtcMessage: sessionDescription,
-    });
-  }
-
-  function answerCall(data) {
-    socket.emit('answerCall', data);
-  }
-
-  function sendCall(data) {
-    socket.emit('call', data);
-  }
+  };
 
   const JoinScreen = () => {
     return (
@@ -224,64 +356,34 @@ export default function App({ }) {
           <>
             <View
               style={{
-                padding: 35,
-                backgroundColor: '#1A1C22',
-                justifyContent: 'center',
-                alignItems: 'center',
-                borderRadius: 14,
-              }}>
-              <Text
-                style={{
-                  fontSize: 18,
-                  color: '#D0D4DD',
-                }}>
-                Your Caller ID
-              </Text>
-              <View
-                style={{
-                  flexDirection: 'row',
-                  marginTop: 12,
-                  alignItems: 'center',
-                }}>
-                <Text
-                  style={{
-                    fontSize: 32,
-                    color: '#ffff',
-                    letterSpacing: 6,
-                  }}>
-                  {callerId}
-                </Text>
-              </View>
-            </View>
-
-            <View
-              style={{
                 backgroundColor: '#1A1C22',
                 padding: 40,
                 marginTop: 25,
                 justifyContent: 'center',
                 borderRadius: 14,
               }}>
-              <Text
-                style={{
-                  fontSize: 18,
-                  color: '#D0D4DD',
-                }}>
-                Enter call id of another user
-              </Text>
               <TextInputContainer
-                placeholder={'Enter Caller ID'}
-                value={otherUserId.current}
+                placeholder={'Enter Your name'}
+                value={myname}
                 setValue={text => {
-                  otherUserId.current = text;
-                  console.log('TEST', otherUserId.current);
+                  setMyName(text);
                 }}
-                keyboardType={'number-pad'}
+                // keyboardType={'number-pad'}
+              />
+              <TextInputContainer
+                placeholder={'Enter Room Name'}
+                value={roomName}
+                setValue={text => {
+                  setRoomName(text);
+                }}
+                // keyboardType={'number-pad'}
               />
               <TouchableOpacity
                 onPress={() => {
-                  setType('OUTGOING_CALL');
-                  processCall();
+                  if (roomName && myname) {
+                    setType('WEBRTC_ROOM');
+                    startCall();
+                  }
                 }}
                 style={{
                   height: 50,
@@ -296,7 +398,7 @@ export default function App({ }) {
                     fontSize: 16,
                     color: '#FFFFFF',
                   }}>
-                  Call Now
+                  Join
                 </Text>
               </TouchableOpacity>
             </View>
@@ -305,139 +407,6 @@ export default function App({ }) {
       </KeyboardAvoidingView>
     );
   };
-
-  const OutgoingCallScreen = () => {
-    return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: 'space-around',
-          backgroundColor: '#050A0E',
-        }}>
-        <View
-          style={{
-            padding: 35,
-            justifyContent: 'center',
-            alignItems: 'center',
-            borderRadius: 14,
-          }}>
-          <Text
-            style={{
-              fontSize: 16,
-              color: '#D0D4DD',
-            }}>
-            Calling to...
-          </Text>
-
-          <Text
-            style={{
-              fontSize: 36,
-              marginTop: 12,
-              color: '#ffff',
-              letterSpacing: 6,
-            }}>
-            {otherUserId.current}
-          </Text>
-        </View>
-        <View
-          style={{
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          <TouchableOpacity
-            onPress={() => {
-              setType('JOIN');
-              otherUserId.current = null;
-            }}
-            style={{
-              backgroundColor: '#FF5D5D',
-              borderRadius: 30,
-              height: 60,
-              aspectRatio: 1,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-            <MaterialIcons size={50} color='red' name='call-end' />
-          </TouchableOpacity>
-        </View>
-      </View>
-    );
-  };
-
-  const IncomingCallScreen = () => {
-    return (
-      <View
-        style={{
-          flex: 1,
-          justifyContent: 'space-around',
-          backgroundColor: '#050A0E',
-        }}>
-        <View
-          style={{
-            padding: 35,
-            justifyContent: 'center',
-            alignItems: 'center',
-            borderRadius: 14,
-          }}>
-          <Text
-            style={{
-              fontSize: 36,
-              marginTop: 12,
-              color: '#ffff',
-            }}>
-            {otherUserId.current} is calling..
-          </Text>
-        </View>
-        <View
-          style={{
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
-          <TouchableOpacity
-            onPress={() => {
-              processAccept();
-              setType('WEBRTC_ROOM');
-            }}
-            style={{
-              backgroundColor: 'green',
-              borderRadius: 30,
-              height: 60,
-              aspectRatio: 1,
-              justifyContent: 'center',
-              alignItems: 'center',
-            }}>
-            <MaterialIcons size={28} color={'#fff'} name='call' />
-          </TouchableOpacity>
-        </View>
-      </View>
-    );
-  };
-
-  function switchCamera() {
-    localStream.getVideoTracks().forEach(track => {
-      track._switchCamera();
-    });
-  }
-
-  function toggleCamera() {
-    localWebcamOn ? setlocalWebcamOn(false) : setlocalWebcamOn(true);
-    localStream.getVideoTracks().forEach(track => {
-      localWebcamOn ? (track.enabled = false) : (track.enabled = true);
-    });
-  }
-
-  function toggleMic() {
-    localMicOn ? setlocalMicOn(false) : setlocalMicOn(true);
-    localStream.getAudioTracks().forEach(track => {
-      localMicOn ? (track.enabled = false) : (track.enabled = true);
-    });
-  }
-
-  function leave() {
-    peerConnection.current.close();
-    setlocalStream(null);
-    setType('JOIN');
-  }
 
   const WebrtcRoomScreen = () => {
     return (
@@ -451,38 +420,35 @@ export default function App({ }) {
         {localStream ? (
           <RTCView
             objectFit={'cover'}
-            style={{ flex: 1, backgroundColor: '#050A0E' }}
+            style={{flex: 1, backgroundColor: '#050A0E'}}
             streamURL={localStream.toURL()}
           />
         ) : null}
-        {remoteStream ? (
-          <RTCView
-            objectFit={'cover'}
-            style={{
-              flex: 1,
-              backgroundColor: '#050A0E',
-              marginTop: 8,
-            }}
-            streamURL={remoteStream.toURL()}
-          />
-        ) : null}
+        {remoteStreams.map(v => {
+          if (!v.stream) {
+            return null;
+          }
+          return (
+            <RTCView
+              key={v.id}
+              objectFit={'cover'}
+              style={{
+                flex: 1,
+                backgroundColor: '#050A0E',
+                marginTop: 8,
+              }}
+              streamURL={v.stream.toURL()}
+            />
+          );
+        })}
+
         <View
           style={{
             marginVertical: 12,
             flexDirection: 'row',
             justifyContent: 'space-evenly',
           }}>
-          <IconContainer
-            backgroundColor={'red'}
-            onPress={() => {
-              leave();
-              navigate('DoctorPrescription')
-            }}
-            Icon={() => {
-              return <MaterialIcons size={26} color='#fff' name='call-end' />
-
-            }}
-          />
+          <SliderMenu onEndCall={endCall} onEndForCall={endCallForAll} />
           <IconContainer
             style={{
               borderWidth: 1.5,
@@ -494,9 +460,9 @@ export default function App({ }) {
             }}
             Icon={() => {
               return localMicOn ? (
-                <MaterialIcons size={24} name={'mic'} color="#FFF" />
+                <MaterialCommunityIcons name='microphone' color='white' size={25} />
               ) : (
-                <MaterialIcons size={28} name={'mic-off'} color="#FFF" />
+                <MaterialCommunityIcons name='microphone-off' color='white' size={25} />
               );
             }}
           />
@@ -511,23 +477,23 @@ export default function App({ }) {
             }}
             Icon={() => {
               return localWebcamOn ? (
-                <MaterialIcons size={24} name={'videocam'} color="#FFF" />
+                <MaterialCommunityIcons name='video' color='white' size={25} />
               ) : (
-                <MaterialIcons size={24} name={'videocam-off'} color="#FFF" />
+                <MaterialCommunityIcons name='video-off' color='white' size={25} />
               );
             }}
           />
-          <IconContainer
-            style={{
-              borderWidth: 1.5,
-              borderColor: '#2B3034',
+
+          <MoreMenu
+            onCameraSwitch={switchCamera}
+            onShareScreen={() => {
+              Alert.alert('Info', 'share screen clicked');
             }}
-            backgroundColor={'transparent'}
-            onPress={() => {
-              switchCamera();
+            onChatClick={() => {
+              setType('Chat');
             }}
-            Icon={() => {
-              return <MaterialIcons size={24} name={'cameraswitch'} color="#FFF" />;
+            onAddParticipantClick={() => {
+              Alert.alert('Info', 'invite participant clicked');
             }}
           />
         </View>
@@ -536,14 +502,12 @@ export default function App({ }) {
   };
 
   switch (type) {
-    case 'JOIN':
+    case 'JoinScreen':
       return JoinScreen();
-    case 'INCOMING_CALL':
-      return IncomingCallScreen();
-    case 'OUTGOING_CALL':
-      return OutgoingCallScreen();
     case 'WEBRTC_ROOM':
       return WebrtcRoomScreen();
+    case 'Chat':
+      return ChatScreen();
     default:
       return null;
   }
